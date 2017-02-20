@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe SessionsController, type: :controller do
   describe 'GET #new' do
     it "should render the new template" do
-      get :new, link: {}
+      get :new, user: {}
 
       expect(response).to render_template(:new)
       expect(response).to have_http_status(200)
@@ -23,7 +23,7 @@ RSpec.describe SessionsController, type: :controller do
 
     context 'with valid params' do
       it 'should redirect to the user home page' do
-        post :create, link: {
+        post :create, user: {
           username: "Dallas",
           password: "secret"
         }
@@ -34,7 +34,7 @@ RSpec.describe SessionsController, type: :controller do
       end
 
       it 'login the user' do
-        post :create, link: {
+        post :create, user: {
           username: "Dallas",
           password: "secret"
         }
@@ -45,7 +45,7 @@ RSpec.describe SessionsController, type: :controller do
 
     context 'with invalid params' do
       it 'should re-render the sign in page and flashes errors' do
-        post :create, link: {
+        post :create, user: {
           username: "Dallas",
           password: "bad"
         }
@@ -55,7 +55,7 @@ RSpec.describe SessionsController, type: :controller do
       end
 
       it 'doesn\'t log in the user' do
-        post :create, link: {
+        post :create, user: {
           username: "Dallas",
           password: "bad"
         }
@@ -65,11 +65,26 @@ RSpec.describe SessionsController, type: :controller do
     end
   end
 
-  # describe 'DELETE #destroy' do
-  #   it 'should redirect to the sign in page' do
-  #
-  #   end
-  #
-  #   it 'should logout the user'
-  # end
+  describe 'DELETE #destroy' do
+    before(:each) do
+      user = User.create(username: "Dallas", password: "secret")
+      post :create, user: {
+        username: "Dallas",
+        password: "secret"
+      }
+      @session_token = user.session_token
+    end
+
+    it 'should redirect to the sign in page' do
+      delete :destroy
+
+      expect(response).to redirect_to(new_session_url)
+    end
+
+    it 'should logout the user' do
+      delete :destroy
+
+      expect(session[:session_token]).to be_nil
+    end
+  end
 end
