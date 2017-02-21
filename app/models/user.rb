@@ -13,6 +13,8 @@ class User < ActiveRecord::Base
     uniqueness: true
   )
 
+  has_many :goals
+
   attr_reader :password
 
   def self.generate_session_token
@@ -41,5 +43,9 @@ class User < ActiveRecord::Base
 
   def valid_password?(password)
     BCrypt::Password.new(self.password_digest).is_password?(password)
+  end
+
+  def public_goals
+    self.goals.where(is_public: true)
   end
 end

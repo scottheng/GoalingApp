@@ -1,0 +1,25 @@
+<% if @goal.persisted?  %>
+  <% url = goal_url(@goal) %>
+<% else %>
+  <% url = goals_url %>
+<% end %>
+
+<form class="" action="<%= url %>" method="post">
+  <%= form_auth %>
+  <% if @goal.persisted? %>
+    <input type="hidden" name="_method" value="PATCH">
+  <% end %>
+
+  <label>Title
+    <input type="text" name="goal[title]" value="<%= @goal.title %>">
+  </label>
+
+  <label>Description
+    <input type="text" name="goal[description]" value="<%= @goal.description %>">
+  </label>
+
+  <label>Public
+    <input type="checkbox" name="goal[is_public]">
+  </label>
+
+</form>
